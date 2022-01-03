@@ -15,16 +15,8 @@
       </div>
     </div>
     <div class="layout-container-table">
-      <Table
-        ref="table"
-        v-model:page="page"
-        v-loading="loading"
-        :showIndex="true"
-        :showSelection="true"
-        :data="tableData"
-        @getTableData="getTableData"
-        @selection-change="handleSelectionChange"
-      >
+      <Table ref="table" v-model:page="page" v-loading="loading" :showIndex="true" :showSelection="true" :data="tableData"
+             @getTableData="getTableData" @selection-change="handleSelectionChange">
         <el-table-column prop="name" label="名称" align="center" />
         <el-table-column prop="number" label="数字" align="center" />
         <el-table-column prop="chooseName" label="选择器" align="center" />
@@ -97,37 +89,38 @@ export default defineComponent({
         ...query
       }
       getData(params)
-      .then(res => {
-        let data = res.data.list
-        if (Array.isArray(data)) {
-          data.forEach(d => {
-            const select = selectData.find(select => select.value === d.choose)
-            select ? d.chooseName = select.label : d.chooseName = d.choose
-            const radio = radioData.find(select => select.value === d.radio)
-            radio ? d.radioName = radio.label : d.radio
-          })
-        }
-        tableData.value = res.data.list
-        page.total = Number(res.data.pager.total)
-      })
-      .catch(error => {
-        tableData.value = []
-        page.index = 1
-        page.total = 0
-      })
-      .finally(() => {
-        loading.value = false
-      })
+        .then(res => {
+          let data = res.data.list
+          if (Array.isArray(data)) {
+            data.forEach(d => {
+              const select = selectData.find(select => select.value === d.choose)
+              select ? (d.chooseName = select.label) : (d.chooseName = d.choose)
+              const radio = radioData.find(select => select.value === d.radio)
+              radio ? (d.radioName = radio.label) : d.radio
+            })
+          }
+          tableData.value = res.data.list
+          page.total = Number(res.data.pager.total)
+        })
+        .catch(error => {
+          tableData.value = []
+          page.index = 1
+          page.total = 0
+        })
+        .finally(() => {
+          loading.value = false
+        })
     }
     // 删除功能
     const handleDel = (data: object[]) => {
       let params = {
-        ids: data.map((e:any)=> {
-          return e.id
-        }).join(',')
+        ids: data
+          .map((e: any) => {
+            return e.id
+          })
+          .join(',')
       }
-      del(params)
-      .then(res => {
+      del(params).then(res => {
         ElMessage({
           type: 'success',
           message: '删除成功'
@@ -169,5 +162,4 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  
 </style>
